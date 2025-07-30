@@ -1,0 +1,11 @@
+Model Information:
+* title:	pink axolotl
+* source:	https://sketchfab.com/3d-models/pink-axolotl-75fd719cfd2649ce89e068decc83e314
+* author:	JohnElkes (https://sketchfab.com/JohnElkes)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "pink axolotl" (https://sketchfab.com/3d-models/pink-axolotl-75fd719cfd2649ce89e068decc83e314) by JohnElkes (https://sketchfab.com/JohnElkes) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
