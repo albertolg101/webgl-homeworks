@@ -26,7 +26,14 @@ import {
     MeshLambertMaterial,
     MeshStandardMaterial,
     SRGBColorSpace,
-    RepeatWrapping
+    RepeatWrapping,
+    SpotLight,
+    PointLight,
+    PointLightHelper,
+    PCFSoftShadowMap,
+    DirectionalLightHelper,
+    EquirectangularReflectionMapping,
+    AmbientLight
 } from "three";
 import Stats from "stats.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
@@ -53,7 +60,10 @@ export class App {
             canvas: document.querySelector("#canvas")
         });
 
+        this._renderer.setPixelRatio(window.devicePixelRatio);
         this._renderer.setSize(window.innerWidth, innerHeight);
+        this._renderer.shadowMap.enabled = true;
+        this._renderer.shadowMap.type = PCFSoftShadowMap;
 
         // Camera
         const aspect = window.innerWidth / window.innerHeight;
@@ -98,90 +108,93 @@ export class App {
 
         // Cube
         {
-            const geometry = new BoxGeometry(1, 1, 1, 3, 3, 3);
-            const image = TL.load('https://i.ibb.co/yFkjhY41/map.jpg');
-            const material = new MeshBasicMaterial({ map: image });
-            const mesh = new Mesh(geometry, material);
-            this._meshes.add(mesh);
+            // const geometry = new BoxGeometry(1, 1, 1, 3, 3, 3);
+            // const image = TL.load('https://i.ibb.co/yFkjhY41/map.jpg');
+            // const material = new MeshBasicMaterial({ map: image });
+            // const mesh = new Mesh(geometry, material);
+            // this._meshes.add(mesh);
         }
         // Sphere
         {
-            const radius = 0.5;
-            const geometry = new SphereGeometry(radius, 32, 32);
-            const material = new MeshPhongMaterial({
-                color: '#1fbeca',
-                shininess: 80,
-                specular: 0x383838,
-            });
-            const mesh = new Mesh(geometry, material);
-            mesh.position.y += 0.5 + radius
-            this._meshes.add(mesh);
+            // const radius = 0.5;
+            // const geometry = new SphereGeometry(radius, 32, 32);
+            // const material = new MeshPhongMaterial({
+            //     color: '#1fbeca',
+            //     shininess: 80,
+            //     specular: 0x383838,
+            // });
+            // const mesh = new Mesh(geometry, material);
+            // mesh.position.y += 0.5 + radius
+            // this._meshes.add(mesh);
         }
         // Plane
         {
-            const geometry = new PlaneGeometry(3, 3, 10, 10);
-            const material = new MeshBasicMaterial({ color: "cyan" })
+            const geometry = new PlaneGeometry(10, 10, 10, 10);
+            const material = new MeshLambertMaterial({
+                color: new Color("#ffffff")
+            });
             const mesh = new Mesh(geometry, material);
             mesh.rotation.x -= Math.PI / 2;
-            mesh.position.y -= 0.5;
-            this._meshes.add(mesh);
+            mesh.receiveShadow = true;
+            // mesh.position.y -= 0.5;
+            this._scene.add(mesh);
         }
         // Custom Mesh
         {
-            const vertices = [
-                [ 1,  0, -Math.SQRT1_2],
-                [ 0,  1,  Math.SQRT1_2],
-                [-1,  0, -Math.SQRT1_2],
-                [ 0, -1,  Math.SQRT1_2],
-            ];
+            // const vertices = [
+            //     [ 1,  0, -Math.SQRT1_2],
+            //     [ 0,  1,  Math.SQRT1_2],
+            //     [-1,  0, -Math.SQRT1_2],
+            //     [ 0, -1,  Math.SQRT1_2],
+            // ];
 
 
-            const triangles = [];
+            // const triangles = [];
 
-            for (let i = 0 ; i < vertices.length ; i++) {
-                for (let j = i + 1 ; j < vertices.length ; j++) {
-                    for (let k = j + 1 ; k < vertices.length ; k++) {
-                        triangles.push(...vertices[i]);
-                        triangles.push(...vertices[j]);
-                        triangles.push(...vertices[k]);
-                    }
-                }
-            }
+            // for (let i = 0 ; i < vertices.length ; i++) {
+            //     for (let j = i + 1 ; j < vertices.length ; j++) {
+            //         for (let k = j + 1 ; k < vertices.length ; k++) {
+            //             triangles.push(...vertices[i]);
+            //             triangles.push(...vertices[j]);
+            //             triangles.push(...vertices[k]);
+            //         }
+            //     }
+            // }
 
-            const colors = [];
-            for (let i = 0 ; i < triangles.length ; i += 3) {
-                const r = MathUtils.randFloat(0, 1);
-                const g = MathUtils.randFloat(0, 1);
-                const b = MathUtils.randFloat(0, 1);
-                colors.push(r, g, b);
-            }
+            // const colors = [];
+            // for (let i = 0 ; i < triangles.length ; i += 3) {
+            //     const r = MathUtils.randFloat(0, 1);
+            //     const g = MathUtils.randFloat(0, 1);
+            //     const b = MathUtils.randFloat(0, 1);
+            //     colors.push(r, g, b);
+            // }
 
-            const geometry = new BufferGeometry();
-            const geometryBuff = new BufferAttribute(new Float32Array(triangles), 3);
-            geometry.setAttribute("position", geometryBuff);
+            // const geometry = new BufferGeometry();
+            // const geometryBuff = new BufferAttribute(new Float32Array(triangles), 3);
+            // geometry.setAttribute("position", geometryBuff);
 
-            const colorBuf = new BufferAttribute(new Float32Array(colors), 3);
-            geometry.setAttribute("color", colorBuf);
+            // const colorBuf = new BufferAttribute(new Float32Array(colors), 3);
+            // geometry.setAttribute("color", colorBuf);
 
-            const material = new MeshBasicMaterial({
-                vertexColors: true,
-                side: DoubleSide,
-            })
+            // const material = new MeshBasicMaterial({
+            //     vertexColors: true,
+            //     side: DoubleSide,
+            // })
             
-            const mesh = new Mesh(geometry, material);
+            // const mesh = new Mesh(geometry, material);
 
-            mesh.scale.setScalar(0.3);
-            mesh.position.y += (Math.sqrt(6) /  6) * 0.3 - 0.5;
-            mesh.position.x -= 1;
-            mesh.position.z += 1;
-            mesh.rotateX(-Math.atan2(1, 2 * Math.SQRT1_2));
-            // mesh.rotateX(-Math.asin(1/Math.sqrt(3)));
+            // mesh.scale.setScalar(0.3);
+            // mesh.position.y += (Math.sqrt(6) /  6) * 0.3 - 0.5;
+            // mesh.position.x -= 1;
+            // mesh.position.z += 1;
+            // mesh.rotateX(-Math.atan2(1, 2 * Math.SQRT1_2));
+            // // mesh.rotateX(-Math.asin(1/Math.sqrt(3)));
 
-            this._meshes.add(mesh);
+            // this._meshes.add(mesh);
         }
         // Torus Knot
         {
-            const geometry = new TorusKnotGeometry();
+            const geometry = new TorusKnotGeometry(1, 0.4, 300, 300);
 
             // MatCap Material
             // const matcapImage = TL.load(
@@ -202,30 +215,37 @@ export class App {
             // });
 
             // Standard Material
-            const image = TL.load('https://i.ibb.co/yFkjhY41/map.jpg');
-            const normalMap = TL.load('https://i.postimg.cc/jdrbFwqN/normals.jpg');
-            const roughnessMap = TL.load('https://i.postimg.cc/65LXJWTP/roughness.jpg');
-            image.colorSpace = SRGBColorSpace;
+            // const image = TL.load('https://i.ibb.co/yFkjhY41/map.jpg');
+            // const normalMap = TL.load('https://i.postimg.cc/jdrbFwqN/normals.jpg');
+            // const roughnessMap = TL.load('https://i.postimg.cc/65LXJWTP/roughness.jpg');
+            // image.colorSpace = SRGBColorSpace;
 
-            const images = [image, normalMap, roughnessMap];
-            images.forEach((el) => {
-            el.repeat.set(7, 1);
-            el.wrapS = el.wrapT = RepeatWrapping;
-            });
+            // const images = [image, normalMap, roughnessMap];
+            // images.forEach((el) => {
+            // el.repeat.set(7, 1);
+            // el.wrapS = el.wrapT = RepeatWrapping;
+            // });
+
+            // const material = new MeshStandardMaterial({
+            //     map: image,
+            //     normalMap,
+            //     roughnessMap,
+            //     displacementMap: roughnessMap,
+            //     displacementScale: 0.0,
+            //     wireframe: false,
+            //     side: DoubleSide,
+            // });
 
             const material = new MeshStandardMaterial({
-                map: image,
-                normalMap,
-                roughnessMap,
-                displacementMap: roughnessMap,
-                displacementScale: 0.0,
-                wireframe: false,
-                side: DoubleSide,
-            });
+                color: '#1fbeca',
+                roughness: 0.2,
+                metalness: 0.6,
+            })
 
             const mesh = new Mesh(geometry, material);
             mesh.scale.setScalar(0.3);
-            mesh.position.y += 2;
+            mesh.position.y += 1;
+            mesh.castShadow = true;
             this._meshes.add(mesh);
         }
 
@@ -233,10 +253,48 @@ export class App {
     }
 
     _initLights() {
-        const light = new DirectionalLight();
-        light.position.x = 5;
-        light.intensity = 3;
-        this._scene.add(light);
+        const ambientLight = new AmbientLight();
+        this._scene.add(ambientLight);
+
+        // Directional Light
+        const directionalLight = new DirectionalLight();
+        directionalLight.position.x = 2;
+        directionalLight.position.y = 1;
+        directionalLight.intensity = 2;
+        const directionalLightHelper = new DirectionalLightHelper(directionalLight);
+        directionalLight.castShadow = true;
+        directionalLight.shadow.mapSize.width = 2048;
+        directionalLight.shadow.mapSize.height = 2048;
+        const size = 1.5;
+        directionalLight.shadow.camera.top = size;
+        directionalLight.shadow.camera.bottom = -size;
+        directionalLight.shadow.camera.left = -size;
+        directionalLight.shadow.camera.right = size;
+        directionalLight.shadow.camera.near = 0.1;
+        directionalLight.shadow.camera.far = 7;
+        
+        this._scene.add(directionalLight, directionalLightHelper);
+
+        // const spotLight = new SpotLight();
+        // spotLight.position.y = 5;
+        // spotLight.intensity = 10;
+        // spotLight.castShadow = true;
+        // this._scene.add(spotLight)
+
+        const pointLight = new PointLight();
+        pointLight.position.set(1, 2, 1);
+        pointLight.scale.setScalar(0.2);
+        pointLight.intensity = 10;
+        pointLight.color.set(0xfcba03);
+        const pointLightHelper = new PointLightHelper(pointLight);
+        // pointLight.castShadow = true;
+        // this._scene.add(pointLight, pointLightHelper);
+
+        // EnvMap
+        const envMap = TL.load('https://thumbs.dreamstime.com/b/k-hdri-map-spherical-environment-panorama-background-modern-interior-light-source-rendering-grey-scales-d-indoor-equirecta-141542152.jpg')
+        // const envMap = TL.load('https://thumbs.dreamstime.com/b/hdri-equirectangular-projection-spherical-panorama-environment-map-d-rendering-109372933.jpg')
+        envMap.mapping = EquirectangularReflectionMapping;
+        this._scene.environment = envMap;
     }
 
     _resize() {
