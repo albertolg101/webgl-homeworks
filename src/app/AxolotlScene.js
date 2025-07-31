@@ -20,6 +20,8 @@ import {
     Vector3,
     TextureLoader,
     DoubleSide,
+    DirectionalLightHelper,
+    CameraHelper,
 } from "three";
 import { EXRLoader, GLTFLoader, Water } from "three/examples/jsm/Addons.js";
 import { addNoiseToPlaneGeometry } from "./helpers";
@@ -172,6 +174,7 @@ export class AxolotlScene {
         directionalLight.castShadow = true;
         directionalLight.shadow.mapSize.width = 1024;
         directionalLight.shadow.mapSize.height = 1024;
+        const directionalLightHelper = new DirectionalLightHelper(directionalLight);
 
         const size = 2;
         directionalLight.shadow.camera.aspect = 1;
@@ -181,8 +184,13 @@ export class AxolotlScene {
         directionalLight.shadow.camera.right = size;
         directionalLight.shadow.camera.near = 18;
         directionalLight.shadow.camera.far = 28;
+        const shadowCameraHelper = new CameraHelper(directionalLight.shadow.camera);
 
-        this._scene.add(directionalLight);
+        this._scene.add(
+            directionalLight,
+            // directionalLightHelper,
+            // shadowCameraHelper,
+        );
     }
 
     _initEvents() {
